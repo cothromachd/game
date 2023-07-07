@@ -9,7 +9,7 @@ import (
 	gameHandler "github.com/cothromachd/game/internal/game/delivery/http"
 	gameRepo "github.com/cothromachd/game/internal/game/repository"
 	gameService "github.com/cothromachd/game/internal/game/service"
-	hasher "github.com/cothromachd/game/pkg/hash"
+	hashito "github.com/cothromachd/game/pkg/hash"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgxpool"
 	log "github.com/sirupsen/logrus"
@@ -42,7 +42,7 @@ func runApp() {
 		log.Fatal(err)
 	}
 
-	hasher := hasher.NewSHA1Hasher(salt)
+	hasher := hashito.NewSHA1Hasher(salt)
 
 	authStorage := authRepo.NewStorage(pgPool)
 	authServ := authService.NewUser(authStorage, hasher, []byte(secret))
