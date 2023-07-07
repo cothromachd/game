@@ -1,0 +1,8 @@
+-- +goose Down
+DROP TABLE IF EXISTS orders;
+
+DROP TABLE IF EXISTS customers;
+
+DROP TABLE IF EXISTS workers;
+
+DROP TABLE IF EXISTS users;

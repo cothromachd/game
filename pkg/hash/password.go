@@ -19,6 +19,6 @@ func (h SHA1Hasher) Hash(password string) (string, error) {
 	if _, err := hash.Write([]byte(password)); err != nil {
 		return "", err
 	}
-	
+
 	return fmt.Sprintf("%x", hash.Sum([]byte(h.salt))), nil
 }
