@@ -2,6 +2,12 @@ package main
 
 import (
 	"context"
+	"os"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/jackc/pgx/v5/pgxpool"
+	log "github.com/sirupsen/logrus"
+
 	authHandler "github.com/cothromachd/game/internal/auth/delivery/http"
 	authRepo "github.com/cothromachd/game/internal/auth/repository"
 	authService "github.com/cothromachd/game/internal/auth/service"
@@ -10,11 +16,6 @@ import (
 	gameRepo "github.com/cothromachd/game/internal/game/repository"
 	gameService "github.com/cothromachd/game/internal/game/service"
 	hashito "github.com/cothromachd/game/pkg/hash"
-	"github.com/gofiber/fiber/v2"
-	"github.com/jackc/pgx/v5/pgxpool"
-	log "github.com/sirupsen/logrus"
-
-	"os"
 )
 
 var (
@@ -23,7 +24,7 @@ var (
 )
 
 const (
-	configPath = "../configs/config.yaml"
+	configPath = "./configs/config.yaml"
 )
 
 func main() {
