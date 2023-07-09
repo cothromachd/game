@@ -1,12 +1,27 @@
-FROM golang:alpine
+FROM golang:1.20.4-alpine as builder
 
-WORKDIR /app
+WORKDIR /usr/app/game
+
+RUN apk update && apk upgrade && \
+    apk add --no-cache git
+
+COPY ./go.* ./
+
+RUN go mod download
 
 COPY . .
 
-RUN go mod download
-RUN go build -o main ./cmd/main.go
+RUN go build -o .bin/main cmd/main.go
 
-EXPOSE 8080
+FROM alpine
 
-CMD ["./main"]
+WORKDIR /usr/app/game
+
+RUN apk update && apk upgrade && \
+    apk add --no-cache git bash
+
+COPY --from=builder /usr/app/game/.bin/main ./.bin/main
+COPY --from=builder /usr/app/game/configs ./configs
+COPY --from=builder /usr/app/game/migrations ./migrations
+
+CMD [".bin/main"]

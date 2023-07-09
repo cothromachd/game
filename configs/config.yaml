@@ -2,4 +2,4 @@ httpSrv:
   addr: "game:8080"
 
 db:
-  conn: "postgres://khalidmagnificent:190204@db:5432/game"
+  conn: "postgres://khalidmagnificent:190204@db:5432/game?sslmode=disable"
