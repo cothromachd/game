@@ -1,13 +1,5 @@
 version: '3.8'
 services:
-  db:
-    image: postgres
-    environment:
-      POSTGRES_USER: khalidmagnificent
-      POSTGRES_PASSWORD: 190204
-      POSTGRES_DB: game
-    ports:
-      - 12345:5432
   game:
     build:
       context: .
@@ -19,3 +11,11 @@ services:
       - JWT_SALT=salt
     depends_on:
       - db
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: khalidmagnificent
+      POSTGRES_PASSWORD: 190204
+      POSTGRES_DB: game
+    ports:
+      - 12345:5432

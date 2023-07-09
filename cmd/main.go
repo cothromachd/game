@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/cothromachd/game/migrations"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -35,7 +36,12 @@ func runApp() {
 	app := fiber.New()
 	cfg, err := config.New(configPath)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
+	}
+
+	err = migrations.Migrate(cfg.DB.Conn)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	pgPool, err := pgxpool.New(context.Background(), cfg.DB.Conn)
