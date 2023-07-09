@@ -22,6 +22,10 @@ func (h *Handler) registerUser(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).SendString(err.Error())
 	}
 
+	if req.Role != models.CustomerRole && req.Role != models.WorkerRole {
+		return ctx.Status(fiber.StatusBadRequest).SendString("invalid role, choose between customer and worker")
+	}
+
 	err := h.userService.RegisterUser(context.Background(), req)
 	if err != nil {
 		logError("registerUser", err)
