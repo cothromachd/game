@@ -5,6 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    networks:
+      - shared
     ports:
       - 8080:8080
     environment:
@@ -19,5 +21,11 @@ services:
       POSTGRES_USER: khalidmagnificent
       POSTGRES_PASSWORD: 190204
       POSTGRES_DB: game
+    networks:
+      - shared
     ports:
       - 12345:5432
+
+networks:
+  shared:
+    driver: bridge

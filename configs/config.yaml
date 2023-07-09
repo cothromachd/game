@@ -1,5 +1,5 @@
 httpSrv:
-  addr: "localhost:8080"
+  addr: "game:8080"
 
 db:
-  conn: "postgres://khalidmagnificent:190204@host.docker.internal:5432/game"
+  conn: "postgres://khalidmagnificent:190204@db:5432/game"
