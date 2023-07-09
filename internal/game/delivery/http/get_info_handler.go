@@ -5,17 +5,10 @@ import (
 	"fmt"
 	"github.com/cothromachd/game/internal/game/models"
 	"github.com/gofiber/fiber/v2"
-	"strconv"
 )
 
 func (h *Handler) GetInfo(ctx *fiber.Ctx) error {
-	userIDHeader, userRole := ctx.Get("id"), ctx.Get("role")
-	userID, err := strconv.Atoi(userIDHeader)
-	if err != nil {
-		logError("GetInfo", err)
-		return err
-	}
-
+	userID, userRole := ctx.Locals("id").(int), ctx.Locals("role").(string)
 	if userRole == models.CustomerRole {
 		customerInfo, err := h.gameService.GetCustomerInfo(context.Background(), userID)
 		if err != nil {

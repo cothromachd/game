@@ -1,18 +1,8 @@
 package models
 
-import "github.com/go-playground/validator/v10"
-
-var (
-	validate *validator.Validate
-)
-
 const (
 	CustomerRole = "customer"
 )
-
-func init() {
-	validate = validator.New()
-}
 
 type Customer struct {
 	UserID       int `db:"user_id" json:"user_id"`

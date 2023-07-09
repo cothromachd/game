@@ -18,7 +18,6 @@ type GetOrderResponse struct {
 	Name       string `db:"name" json:"name"`
 	Weight     int    `db:"weight" json:"weight"`
 	CustomerID int    `db:"customer_id" json:"customer_id"`
-	WorkerID   int    `db:"worker_id" json:"worker_id"`
 }
 
 func GenerateRandomOrderName() string {

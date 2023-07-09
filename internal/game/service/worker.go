@@ -15,5 +15,5 @@ func (gs GameService) GetWorkerInfo(ctx context.Context, workerID int) (models.G
 	return gs.gameRepo.GetWorkerInfo(ctx, workerID)
 }
 func (gs GameService) GetCompletedWorkerOrders(ctx context.Context, workerID int) ([]models.GetCompletedWorkerOrdersResponse, error) {
-	return gs.GetCompletedWorkerOrders(ctx, workerID)
+	return gs.gameRepo.GetCompletedWorkerOrders(ctx, workerID)
 }

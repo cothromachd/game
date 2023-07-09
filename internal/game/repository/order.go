@@ -9,8 +9,8 @@ import (
 
 func (s Storage) GetOrder(ctx context.Context, orderID int) (models.GetOrderResponse, error) {
 	var order models.GetOrderResponse
-	err := s.pgPool.QueryRow(ctx, "SELECT name, weight, customer_id, worker_id FROM orders WHERE id = $1;", orderID).
-		Scan(&order.Name, &order.Weight, &order.CustomerID, &order.WorkerID)
+	err := s.pgPool.QueryRow(ctx, "SELECT name, weight, customer_id FROM orders WHERE id = $1;", orderID).
+		Scan(&order.Name, &order.Weight, &order.CustomerID)
 	if err != nil {
 		return models.GetOrderResponse{}, err
 	}

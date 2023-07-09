@@ -3,6 +3,7 @@ package delivery
 import (
 	"context"
 	"encoding/json"
+
 	"github.com/cothromachd/game/internal/auth/models"
 	"github.com/gofiber/fiber/v2"
 )
@@ -26,13 +27,7 @@ func (h *Handler) loginUser(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusInternalServerError).SendString(err.Error())
 	}
 
-	response, err := json.Marshal(map[string]string{
+	return ctx.JSON(map[string]string{
 		"token": token,
 	})
-	if err != nil {
-		logError("loginUser", err)
-		return ctx.Status(fiber.StatusInternalServerError).SendString(err.Error())
-	}
-
-	return ctx.JSON(response)
 }

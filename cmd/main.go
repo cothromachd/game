@@ -42,6 +42,10 @@ func runApp() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	err = pgPool.Ping(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	hasher := hashito.NewSHA1Hasher(salt)
 
@@ -53,6 +57,6 @@ func runApp() {
 	gameServ := gameService.NewGame(gameStorage)
 	app = gameHandler.NewHandler(app, gameServ)
 
-	log.Infoln("Server started...")
+	log.Infoln("Server started... HEY")
 	log.Fatal(app.Listen(cfg.Srv.Addr))
 }

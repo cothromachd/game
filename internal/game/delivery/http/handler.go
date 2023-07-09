@@ -2,7 +2,9 @@ package delivery
 
 import (
 	"context"
+
 	"github.com/cothromachd/game/internal/game/models"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -27,6 +29,8 @@ type GameService interface {
 }
 
 type Handler struct {
+	salt string
+
 	gameService GameService
 }
 

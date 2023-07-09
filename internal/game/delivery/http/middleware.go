@@ -2,14 +2,16 @@ package delivery
 
 import (
 	"errors"
-	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt"
 )
+
+var secret = os.Getenv("JWT_SECRET")
 
 func (h *Handler) authMiddleware(ctx *fiber.Ctx) error {
 	token, err := getTokenFromRequest(ctx)
@@ -17,51 +19,56 @@ func (h *Handler) authMiddleware(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	t, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-
-		return os.Getenv("JWT_SECRET"), nil
+	parser := jwt.Parser{ValidMethods: []string{jwt.SigningMethodHS256.Alg()}}
+	t, err := parser.ParseWithClaims(token, &jwt.StandardClaims{}, func(t *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
 	})
-	if err != nil {
-		return err
+
+	claims, ok := t.Claims.(*jwt.StandardClaims)
+	if !ok {
+		logError("authMiddleware", err)
+		return errors.New("invalid claims")
 	}
 
-	if !t.Valid {
+	err = claims.Valid()
+	if err != nil {
+		logError("authMiddleware", err)
 		return errors.New("invalid token")
 	}
-
-	claims, ok := t.Claims.(jwt.MapClaims)
-	if !ok {
-		return errors.New("invalid claims")
+	if !t.Valid {
+		logError("authMiddleware", err)
+		return ctx.Status(fiber.StatusBadRequest).SendString(err.Error())
 	}
 
-	expTime, ok := claims["exp"].(float64)
-	if !ok {
-		return errors.New("invalid claims")
-	}
-	if float64(time.Now().Unix()) > expTime {
-		return errors.New("token is expired")
+	exp := claims.ExpiresAt
+	if exp == 0 {
+		logError("authMiddleware", err)
+		return ctx.Status(fiber.StatusBadRequest).SendString("token expiration is not set")
+	} else if !(exp >= time.Now().Unix()) {
+		logError("authMiddleware", err)
+		return ctx.Status(fiber.StatusBadRequest).SendString("login token expired, get new one")
 	}
 
-	subject, ok := claims["sub"].(string)
-	if !ok {
-		return errors.New("invalid subject")
+	subject := claims.Subject
+	if subject == "" {
+		logError("authMiddleware", err)
+		return ctx.Status(fiber.StatusBadRequest).SendString("userID is not set")
 	}
 
 	id, err := strconv.Atoi(subject)
 	if err != nil {
-		return errors.New("invalid subject")
+		logError("authMiddleware", err)
+		return ctx.Status(fiber.StatusInternalServerError).SendString("can't convert id to integer")
 	}
-	ctx.Set("id", strconv.Itoa(id))
+	ctx.Locals("id", id)
 
-	role, ok := claims["iss"].(string)
-	if !ok {
-		return errors.New("invalid subject")
+	role := claims.Issuer
+	if role == "" {
+		logError("authMiddleware", err)
+		return ctx.Status(fiber.StatusBadRequest).SendString("user role is not set")
 	}
-	ctx.Set("role", role)
 
+	ctx.Locals("role", role)
 	return ctx.Next()
 }
 
@@ -79,6 +86,5 @@ func getTokenFromRequest(ctx *fiber.Ctx) (string, error) {
 	if len(headerParts[1]) == 0 {
 		return "", errors.New("token is empty")
 	}
-
 	return headerParts[1], nil
 }

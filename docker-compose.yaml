@@ -11,7 +11,7 @@ services:
   game:
     build:
       context: .
-      dockerfile: ./docker/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - 8080:8080
     environment:

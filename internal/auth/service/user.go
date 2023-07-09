@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"github.com/cothromachd/game/internal/auth/models"
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt"
 	"strconv"
 	"time"
 )
@@ -22,14 +22,14 @@ type User struct {
 	repo   UserRepository
 	hasher PasswordHasher
 
-	hmacSercet []byte
+	secret []byte
 }
 
 func NewUser(repo UserRepository, hasher PasswordHasher, secret []byte) *User {
 	return &User{
-		repo:       repo,
-		hasher:     hasher,
-		hmacSercet: secret,
+		repo:   repo,
+		hasher: hasher,
+		secret: secret,
 	}
 }
 
@@ -57,13 +57,18 @@ func (s *User) LoginUser(ctx context.Context, req models.LoginUserRequest) (stri
 		return "", err
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		Subject:   strconv.Itoa(user.ID),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
+		ExpiresAt: time.Now().Add(15 * time.Minute).Unix(),
+		IssuedAt:  time.Now().Unix(),
 		Issuer:    user.Role,
 	})
+	response, err := token.SignedString(s.secret)
+	if err != nil {
+		return "", err
+	}
 
-	return token.SignedString(s.hmacSercet)
+	return response, nil
 }
 
 /*

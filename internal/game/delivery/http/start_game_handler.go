@@ -6,25 +6,18 @@ import (
 	"errors"
 	"github.com/cothromachd/game/internal/game/models"
 	"github.com/gofiber/fiber/v2"
-	"strconv"
 )
 
 func (h *Handler) StartGame(ctx *fiber.Ctx) error {
-	userIDHeader, userRole := ctx.Get("id"), ctx.Get("role")
+	userID, userRole := ctx.Locals("id").(int), ctx.Locals("role").(string)
 	if userRole == models.WorkerRole {
 		logError("StartGame", errors.New("invalid role"))
 		return ctx.Status(fiber.StatusForbidden).SendString("You can't use this request")
 	}
 
-	userID, err := strconv.Atoi(userIDHeader)
-	if err != nil {
-		logError("StartGame", err)
-		return err
-	}
-
 	reqBody := ctx.Body()
 	startGameReq := models.StartGameRequest{}
-	err = json.Unmarshal(reqBody, &startGameReq)
+	err := json.Unmarshal(reqBody, &startGameReq)
 	if err != nil {
 		logError("StartGame", err)
 		return ctx.Status(fiber.StatusBadRequest).SendString("Invalid JSON input")

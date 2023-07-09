@@ -28,7 +28,7 @@ func (s Storage) CreateUser(ctx context.Context, user models.User) error {
 	}
 
 	var userID int
-	err = tx.QueryRow(ctx, "INSERT INTO users (username, password, role) VALUES ('$1', '$2', '$3') RETURNING id;",
+	err = tx.QueryRow(ctx, "INSERT INTO users (username, password, role) VALUES ($1, $2, $3) RETURNING id;",
 		user.Username, user.Password, user.Role).Scan(&userID)
 	if err != nil {
 		tx.Rollback(ctx)
@@ -45,7 +45,7 @@ func (s Storage) CreateUser(ctx context.Context, user models.User) error {
 		}
 	} else if user.Role == models.WorkerRole {
 		_, err = tx.Exec(ctx, "INSERT INTO workers (user_id, max_weight, is_drunk, fatigue, salary) VALUES ($1, $2, $3, $4, $5);",
-			userID, r.Intn(10-5+1)+5, r.Intn(2) == 1, math.Round((r.Float64())*100+1), r.Intn(30000-10000+1)+10000)
+			userID, r.Intn(30-5+1)+5, r.Intn(2) == 1, math.Round((r.Float64())*100+1), r.Intn(30000-10000+1)+10000)
 		if err != nil {
 			tx.Rollback(ctx)
 			return err

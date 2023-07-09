@@ -107,9 +107,5 @@ func (s Storage) GetCustomerAndWorkersStats(ctx context.Context, customerID int,
 
 func (s Storage) UpdateCustomer(ctx context.Context, customerID int, customerStartCapital int) error {
 	_, err := s.pgPool.Exec(ctx, "UPDATE customers SET start_capital = $1 WHERE user_id = $2;", customerStartCapital, customerID)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }

@@ -1,9 +1,9 @@
 package config
 
 import (
-	"go.uber.org/multierr"
-	"gopkg.in/yaml.v3"
 	"os"
+
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
@@ -19,12 +19,12 @@ type DB struct {
 	Conn string `yaml:"conn"`
 }
 
-func New(path string) (_ *Config, err error) {
+func New(path string) (*Config, error) {
 	file, err := os.OpenFile(path, os.O_RDONLY, 0755)
 	if err != nil {
 		return nil, err
 	}
-	defer multierr.AppendInto(&err, file.Close())
+	defer file.Close()
 
 	var cfg Config
 	return &cfg, yaml.NewDecoder(file).Decode(&cfg)

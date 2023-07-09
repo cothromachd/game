@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"github.com/cothromachd/game/internal/game/models"
+	"log"
 )
 
 type CustomerRepository interface {
@@ -42,6 +43,7 @@ func (gs GameService) StartGame(ctx context.Context, customerID int, workerIDs [
 
 	order, err := gs.gameRepo.GetOrder(ctx, orderID)
 	if err != nil {
+		log.Println(22)
 		return false, err
 	}
 
@@ -51,9 +53,9 @@ func (gs GameService) StartGame(ctx context.Context, customerID int, workerIDs [
 		totalWorkersSalary += worker.Salary
 
 		if worker.IsDrunk {
-			totalMaxWeight += float64(worker.MaxWeight) * ((100 - float64(worker.Fatigue)) / 100) * (float64(worker.Fatigue+50) / 100)
+			totalMaxWeight += float64(worker.MaxWeight) * ((100 - worker.Fatigue) / 100) * (worker.Fatigue + 50/100)
 		} else {
-			totalMaxWeight += float64(worker.MaxWeight) * ((100 - float64(worker.Fatigue)) / 100)
+			totalMaxWeight += float64(worker.MaxWeight) * ((100 - worker.Fatigue) / 100)
 		}
 	}
 
