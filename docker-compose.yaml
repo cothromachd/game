@@ -21,6 +21,8 @@ services:
       POSTGRES_USER: khalidmagnificent
       POSTGRES_PASSWORD: 190204
       POSTGRES_DB: game
+    volumes:
+      - db_data:/var/lib/postgresql/data
     networks:
       - shared
     ports:
@@ -29,3 +31,5 @@ services:
 networks:
   shared:
     driver: bridge
+volumes:
+  db_data:
