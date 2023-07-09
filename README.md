@@ -18,7 +18,7 @@
 `/public/tasks` - `POST` запрос для случайной генерации заказов (от 2 до 8) с никнеймом заказчика в теле запроса
 ```json
 {
-   "customerUsername":"username"
+   "customerUsername": "username"
 }
 ```
 
@@ -30,7 +30,7 @@
 ```json
 {
     "workerIDs": [1,2,3],
-    "orderID":1
+    "orderID": 1
 }
 ```
 
